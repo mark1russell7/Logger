@@ -7,11 +7,10 @@ settings:
 importers:
 
   .:
-    dependencies:
+    devDependencies:
       '@mark1russell7/cue':
         specifier: github:mark1russell7/cue#main
         version: https://codeload.github.com/mark1russell7/cue/tar.gz/e751d55e2bfe65ab4cff86768de8f387e9757097
-    devDependencies:
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
