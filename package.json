@@ -14,9 +14,6 @@
   "author": "",
   "license": "ISC",
   "type": "module",
-  "dependencies": {
-    "@mark1russell7/cue": "github:mark1russell7/cue#main"
-  },
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
@@ -32,5 +29,8 @@
   "devDependencies": {
     "typescript": "^5.9.3",
     "@mark1russell7/cue": "github:mark1russell7/cue#main"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": ["@mark1russell7/cue"]
   }
 }
