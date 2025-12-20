@@ -8,7 +8,9 @@
     "build": "tsc -b",
     "typecheck": "tsc --noEmit",
     "clean": "rm -rf dist .tsbuildinfo",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "keywords": [],
   "author": "",
@@ -28,9 +30,13 @@
   "sideEffects": false,
   "devDependencies": {
     "typescript": "^5.9.3",
-    "@mark1russell7/cue": "github:mark1russell7/cue#main"
+    "@mark1russell7/cue": "github:mark1russell7/cue#main",
+    "vitest": "^3.0.0",
+    "@mark1russell7/test": "github:mark1russell7/test#main"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["@mark1russell7/cue"]
+    "onlyBuiltDependencies": [
+      "@mark1russell7/cue"
+    ]
   }
 }
