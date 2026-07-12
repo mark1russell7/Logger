@@ -218,6 +218,24 @@ describe("Logger", () => {
       expect(transport.entries).toHaveLength(2);
     });
 
+    it("addTransport on a child does not mutate the parent's transports", () => {
+      const parentTransport = createMockTransport();
+      const parent = new Logger({ transports: [parentTransport] });
+      const child = parent.child("Child");
+
+      const childTransport = createMockTransport();
+      child.addTransport(childTransport);
+
+      parent.info("parent message");
+
+      // The child-only transport must not receive the parent's writes.
+      expect(childTransport.entries).toHaveLength(0);
+      expect(parentTransport.entries).toHaveLength(1);
+
+      child.info("child message");
+      expect(childTransport.entries).toHaveLength(1);
+    });
+
     it("handles child of logger without context", () => {
       const transport = createMockTransport();
       const parent = new Logger({ transports: [transport] });

@@ -135,7 +135,11 @@ export class Logger {
     const options: LoggerOptions = {
       level: this.level,
       context: this.context ? `${this.context}:${context}` : context,
-      transports: this.transports,
+      // Copy the array so addTransport/removeTransport on the child does not
+      // mutate the parent's transport list (and vice versa). The transport
+      // instances themselves are still shared, so writes continue to fan out
+      // to the same destinations.
+      transports: [...this.transports],
       formatter: this.formatter,
     };
     if (this.onTransportError) {
