@@ -24,6 +24,11 @@ export class Logger {
         this.transports = options.transports ?? [new ConsoleTransport()];
         this.formatter = options.formatter ?? new SimpleFormatter();
         this.onTransportError = options.onTransportError;
+        // Apply the logger's default formatter to any transport that was not
+        // constructed with its own explicit formatter (LoggerOptions.formatter).
+        for (const transport of this.transports) {
+            transport.setDefaultFormatter?.(this.formatter);
+        }
     }
     /**
      * Log at a specific level.

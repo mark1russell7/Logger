@@ -8,6 +8,8 @@ import {
 } from "../logger.js";
 import { LogLevel } from "../types.js";
 import type { Transport, LogEntry } from "../types.js";
+import { createCallbackTransport } from "../transports.js";
+import { JsonFormatter, SimpleFormatter } from "../formatters.js";
 
 function createMockTransport(): Transport & { entries: LogEntry[] } {
   const entries: LogEntry[] = [];
@@ -311,6 +313,40 @@ describe("Logger", () => {
       await logger.close();
 
       expect(transport.close).toHaveBeenCalled();
+    });
+  });
+
+  describe("default formatter (LoggerOptions.formatter)", () => {
+    it("applies LoggerOptions.formatter to transports without their own formatter", () => {
+      let formatted = "";
+      const cb = createCallbackTransport({
+        callback: (_entry, f) => {
+          formatted = f;
+        },
+      });
+      const logger = new Logger({ transports: [cb], formatter: new JsonFormatter() });
+
+      logger.info("hello");
+
+      // The JSON formatter produces parseable JSON with the message field.
+      const parsed = JSON.parse(formatted) as { message: string };
+      expect(parsed.message).toBe("hello");
+    });
+
+    it("does not override a transport's own explicit formatter", () => {
+      let formatted = "";
+      const cb = createCallbackTransport({
+        callback: (_entry, f) => {
+          formatted = f;
+        },
+        formatter: new SimpleFormatter(),
+      });
+      const logger = new Logger({ transports: [cb], formatter: new JsonFormatter() });
+
+      logger.info("hello");
+
+      // SimpleFormatter output (not JSON) begins with the bracketed level.
+      expect(formatted.startsWith("[INFO]")).toBe(true);
     });
   });
 

@@ -37,10 +37,18 @@ const getConsole = (): ConsoleType => (globalThis as unknown as { console: Conso
  */
 export class ConsoleTransport implements Transport {
   readonly name = "console";
-  private readonly formatter: Formatter;
+  private formatter: Formatter;
+  private readonly hasExplicitFormatter: boolean;
 
   constructor(options: ConsoleTransportOptions = {}) {
+    this.hasExplicitFormatter = options.formatter !== undefined;
     this.formatter = options.formatter ?? new SimpleFormatter();
+  }
+
+  setDefaultFormatter(formatter: Formatter): void {
+    if (!this.hasExplicitFormatter) {
+      this.formatter = formatter;
+    }
   }
 
   write(entry: LogEntry): void {
@@ -114,11 +122,19 @@ export interface CallbackTransportOptions {
 export class CallbackTransport implements Transport {
   readonly name = "callback";
   private readonly callback: (entry: LogEntry, formatted: string) => void | Promise<void>;
-  private readonly formatter: Formatter;
+  private formatter: Formatter;
+  private readonly hasExplicitFormatter: boolean;
 
   constructor(options: CallbackTransportOptions) {
     this.callback = options.callback;
+    this.hasExplicitFormatter = options.formatter !== undefined;
     this.formatter = options.formatter ?? new SimpleFormatter();
+  }
+
+  setDefaultFormatter(formatter: Formatter): void {
+    if (!this.hasExplicitFormatter) {
+      this.formatter = formatter;
+    }
   }
 
   write(entry: LogEntry): void | Promise<void> {

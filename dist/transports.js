@@ -12,8 +12,15 @@ const getConsole = () => globalThis.console;
 export class ConsoleTransport {
     name = "console";
     formatter;
+    hasExplicitFormatter;
     constructor(options = {}) {
+        this.hasExplicitFormatter = options.formatter !== undefined;
         this.formatter = options.formatter ?? new SimpleFormatter();
+    }
+    setDefaultFormatter(formatter) {
+        if (!this.hasExplicitFormatter) {
+            this.formatter = formatter;
+        }
     }
     write(entry) {
         const message = this.formatter.format(entry);
@@ -66,9 +73,16 @@ export class CallbackTransport {
     name = "callback";
     callback;
     formatter;
+    hasExplicitFormatter;
     constructor(options) {
         this.callback = options.callback;
+        this.hasExplicitFormatter = options.formatter !== undefined;
         this.formatter = options.formatter ?? new SimpleFormatter();
+    }
+    setDefaultFormatter(formatter) {
+        if (!this.hasExplicitFormatter) {
+            this.formatter = formatter;
+        }
     }
     write(entry) {
         const formatted = this.formatter.format(entry);

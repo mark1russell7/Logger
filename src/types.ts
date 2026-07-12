@@ -78,6 +78,13 @@ export interface Transport {
   flush?(): void | Promise<void>;
   /** Close the transport (optional) */
   close?(): void | Promise<void>;
+  /**
+   * Adopt a default formatter provided by the owning Logger
+   * (`LoggerOptions.formatter`). Implementations should only apply it if the
+   * transport was not constructed with its own explicit formatter. Optional:
+   * transports that don't format (e.g. an in-memory buffer) may omit it.
+   */
+  setDefaultFormatter?(formatter: Formatter): void;
 }
 
 // =============================================================================

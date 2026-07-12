@@ -19,8 +19,10 @@ export interface ConsoleTransportOptions {
  */
 export declare class ConsoleTransport implements Transport {
     readonly name = "console";
-    private readonly formatter;
+    private formatter;
+    private readonly hasExplicitFormatter;
     constructor(options?: ConsoleTransportOptions);
+    setDefaultFormatter(formatter: Formatter): void;
     write(entry: LogEntry): void;
 }
 /**
@@ -50,8 +52,10 @@ export interface CallbackTransportOptions {
 export declare class CallbackTransport implements Transport {
     readonly name = "callback";
     private readonly callback;
-    private readonly formatter;
+    private formatter;
+    private readonly hasExplicitFormatter;
     constructor(options: CallbackTransportOptions);
+    setDefaultFormatter(formatter: Formatter): void;
     write(entry: LogEntry): void | Promise<void>;
 }
 /**
