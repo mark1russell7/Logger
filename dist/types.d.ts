@@ -71,6 +71,14 @@ export interface LoggerOptions {
     transports?: Transport[];
     /** Default formatter for transports that don't have one */
     formatter?: Formatter;
+    /**
+     * Called when a transport's `write()` throws synchronously or returns a
+     * rejecting promise. Lets callers observe/report transport failures instead
+     * of them surfacing as unhandled promise rejections (which crash the
+     * process on a default Node configuration). If omitted, such failures are
+     * silently swallowed.
+     */
+    onTransportError?: (error: unknown, transport: Transport) => void;
 }
 /**
  * Options for a single log call.

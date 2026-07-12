@@ -295,6 +295,57 @@ describe("Logger", () => {
       expect(transport.close).toHaveBeenCalled();
     });
   });
+
+  describe("transport error handling", () => {
+    it("does not reject when an async transport write rejects", async () => {
+      const failing: Transport = {
+        name: "failing",
+        write: () => Promise.reject(new Error("write failed")),
+      };
+      const logger = new Logger({ transports: [failing] });
+
+      // Must not throw synchronously and the rejection must be handled
+      // internally (no unhandled rejection).
+      expect(() => logger.info("boom")).not.toThrow();
+      // Let the rejected microtask settle.
+      await Promise.resolve();
+      await Promise.resolve();
+    });
+
+    it("invokes onTransportError for a rejecting async transport", async () => {
+      const err = new Error("async boom");
+      const failing: Transport = {
+        name: "failing",
+        write: () => Promise.reject(err),
+      };
+      const onTransportError = vi.fn();
+      const logger = new Logger({ transports: [failing], onTransportError });
+
+      logger.info("boom");
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(onTransportError).toHaveBeenCalledWith(err, failing);
+    });
+
+    it("invokes onTransportError for a synchronously throwing transport and still writes to others", () => {
+      const err = new Error("sync boom");
+      const throwing: Transport = {
+        name: "throwing",
+        write: () => {
+          throw err;
+        },
+      };
+      const good = createMockTransport();
+      const onTransportError = vi.fn();
+      const logger = new Logger({ transports: [throwing, good], onTransportError });
+
+      logger.info("boom");
+
+      expect(onTransportError).toHaveBeenCalledWith(err, throwing);
+      expect(good.entries).toHaveLength(1);
+    });
+  });
 });
 
 describe("createLogger", () => {

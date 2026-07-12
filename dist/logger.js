@@ -17,11 +17,13 @@ export class Logger {
     context;
     transports;
     formatter;
+    onTransportError;
     constructor(options = {}) {
         this.level = options.level ?? LogLevel.INFO;
         this.context = options.context;
         this.transports = options.transports ?? [new ConsoleTransport()];
         this.formatter = options.formatter ?? new SimpleFormatter();
+        this.onTransportError = options.onTransportError;
     }
     /**
      * Log at a specific level.
@@ -46,7 +48,34 @@ export class Logger {
             entry.error = options.error;
         }
         for (const transport of this.transports) {
-            transport.write(entry);
+            try {
+                const result = transport.write(entry);
+                // A transport may write asynchronously (`write` returns a promise).
+                // Attach a rejection handler so a failing async transport does not
+                // become an unhandled rejection that crashes the process.
+                if (result && typeof result.then === "function") {
+                    result.catch((error) => this.handleTransportError(transport, error));
+                }
+            }
+            catch (error) {
+                // A transport that throws synchronously must not prevent the remaining
+                // transports from receiving the entry.
+                this.handleTransportError(transport, error);
+            }
+        }
+    }
+    /**
+     * Report a transport failure via the configured hook, if any.
+     * The hook itself is guarded so a faulty handler can never crash the logger.
+     */
+    handleTransportError(transport, error) {
+        if (this.onTransportError) {
+            try {
+                this.onTransportError(error, transport);
+            }
+            catch {
+                // Intentionally ignored: the error handler must never throw.
+            }
         }
     }
     /**
@@ -89,12 +118,16 @@ export class Logger {
      * Create a child logger with a specific context.
      */
     child(context) {
-        return new Logger({
+        const options = {
             level: this.level,
             context: this.context ? `${this.context}:${context}` : context,
             transports: this.transports,
             formatter: this.formatter,
-        });
+        };
+        if (this.onTransportError) {
+            options.onTransportError = this.onTransportError;
+        }
+        return new Logger(options);
     }
     /**
      * Set the log level.

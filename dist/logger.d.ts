@@ -13,11 +13,17 @@ export declare class Logger {
     private context;
     private transports;
     private formatter;
+    private onTransportError;
     constructor(options?: LoggerOptions);
     /**
      * Log at a specific level.
      */
     log(level: LogLevel, message: string, options?: LogOptions): void;
+    /**
+     * Report a transport failure via the configured hook, if any.
+     * The hook itself is guarded so a faulty handler can never crash the logger.
+     */
+    private handleTransportError;
     /**
      * Log an error.
      */
