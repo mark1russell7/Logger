@@ -1,43 +1,25 @@
-name: logger CI
+# The CI of this repository: the shared CI of mark1russell7 (reusable-ci.yml of mark1russell7/template,
+# its CI.md). The job runs each standard script that package.json has (format:check, typecheck, lint,
+# test, build and lint:ste) on Linux, Windows and macOS, with Node.js 22, 24 and 26.
+name: CI
 
 on:
   push:
-    branches: [main]
   pull_request:
-    branches: [main]
+  # release.yml starts these gates before a release
+  workflow_call:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  test:
-    strategy:
-      fail-fast: false
-      matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
-        node: [20, 22]
-    runs-on: ${{ matrix.os }}
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install
-
-      - name: Build package
-        run: pnpm build
-
-      - name: Run tests
-        run: pnpm test
-
-      - name: Type check
-        run: pnpm typecheck
+  ci:
+    uses: mark1russell7/template/.github/workflows/reusable-ci.yml@9b17adc229b6ecf4f6a16d61d38c6ef34ba17d94 # main
+    with:
+      # The logger runs on each OS. Node.js 22 is the oldest supported LTS version.
+      os: '["ubuntu-latest", "windows-latest", "macos-latest"]'
+      node-versions: '["22", "24", "26"]'
