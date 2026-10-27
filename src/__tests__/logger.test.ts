@@ -53,8 +53,8 @@ describe("Logger", () => {
       logger.debug("debug message");
 
       expect(transport.entries).toHaveLength(2);
-      expect(transport.entries[0].level).toBe(LogLevel.ERROR);
-      expect(transport.entries[1].level).toBe(LogLevel.WARN);
+      expect(transport.entries[0]?.level).toBe(LogLevel.ERROR);
+      expect(transport.entries[1]?.level).toBe(LogLevel.WARN);
     });
 
     it("can change log level at runtime", () => {
@@ -80,8 +80,8 @@ describe("Logger", () => {
 
       logger.error("error message");
 
-      expect(transport.entries[0].level).toBe(LogLevel.ERROR);
-      expect(transport.entries[0].message).toBe("error message");
+      expect(transport.entries[0]?.level).toBe(LogLevel.ERROR);
+      expect(transport.entries[0]?.message).toBe("error message");
     });
 
     it("warn() logs at WARN level", () => {
@@ -90,7 +90,7 @@ describe("Logger", () => {
 
       logger.warn("warn message");
 
-      expect(transport.entries[0].level).toBe(LogLevel.WARN);
+      expect(transport.entries[0]?.level).toBe(LogLevel.WARN);
     });
 
     it("info() logs at INFO level", () => {
@@ -99,7 +99,7 @@ describe("Logger", () => {
 
       logger.info("info message");
 
-      expect(transport.entries[0].level).toBe(LogLevel.INFO);
+      expect(transport.entries[0]?.level).toBe(LogLevel.INFO);
     });
 
     it("debug() logs at DEBUG level", () => {
@@ -108,7 +108,7 @@ describe("Logger", () => {
 
       logger.debug("debug message");
 
-      expect(transport.entries[0].level).toBe(LogLevel.DEBUG);
+      expect(transport.entries[0]?.level).toBe(LogLevel.DEBUG);
     });
 
     it("trace() logs at TRACE level", () => {
@@ -117,7 +117,7 @@ describe("Logger", () => {
 
       logger.trace("trace message");
 
-      expect(transport.entries[0].level).toBe(LogLevel.TRACE);
+      expect(transport.entries[0]?.level).toBe(LogLevel.TRACE);
     });
 
     it("errorWithException() includes the error object", () => {
@@ -127,7 +127,7 @@ describe("Logger", () => {
 
       logger.errorWithException("error occurred", error);
 
-      expect(transport.entries[0].error).toBe(error);
+      expect(transport.entries[0]?.error).toBe(error);
     });
   });
 
@@ -141,7 +141,7 @@ describe("Logger", () => {
 
       logger.info("message");
 
-      expect(transport.entries[0].context).toBe("TestModule");
+      expect(transport.entries[0]?.context).toBe("TestModule");
     });
 
     it("allows per-log context override", () => {
@@ -153,7 +153,7 @@ describe("Logger", () => {
 
       logger.info("message", { context: "OverrideContext" });
 
-      expect(transport.entries[0].context).toBe("OverrideContext");
+      expect(transport.entries[0]?.context).toBe("OverrideContext");
     });
   });
 
@@ -164,7 +164,7 @@ describe("Logger", () => {
 
       logger.info("message", { data: { userId: 123, action: "login" } });
 
-      expect(transport.entries[0].data).toEqual({ userId: 123, action: "login" });
+      expect(transport.entries[0]?.data).toEqual({ userId: 123, action: "login" });
     });
 
     it("includes timestamp in log entry", () => {
@@ -175,8 +175,8 @@ describe("Logger", () => {
       logger.info("message");
       const after = new Date();
 
-      expect(transport.entries[0].timestamp.getTime()).toBeGreaterThanOrEqual(before.getTime());
-      expect(transport.entries[0].timestamp.getTime()).toBeLessThanOrEqual(after.getTime());
+      expect(transport.entries[0]?.timestamp.getTime()).toBeGreaterThanOrEqual(before.getTime());
+      expect(transport.entries[0]?.timestamp.getTime()).toBeLessThanOrEqual(after.getTime());
     });
   });
 
@@ -191,7 +191,7 @@ describe("Logger", () => {
       const child = parent.child("Child");
       child.info("message");
 
-      expect(transport.entries[0].context).toBe("Parent:Child");
+      expect(transport.entries[0]?.context).toBe("Parent:Child");
     });
 
     it("child inherits log level", () => {
@@ -206,7 +206,7 @@ describe("Logger", () => {
       child.warn("should log");
 
       expect(transport.entries).toHaveLength(1);
-      expect(transport.entries[0].level).toBe(LogLevel.WARN);
+      expect(transport.entries[0]?.level).toBe(LogLevel.WARN);
     });
 
     it("child shares transports with parent", () => {
@@ -245,7 +245,7 @@ describe("Logger", () => {
       const child = parent.child("OnlyChild");
       child.info("message");
 
-      expect(transport.entries[0].context).toBe("OnlyChild");
+      expect(transport.entries[0]?.context).toBe("OnlyChild");
     });
   });
 
