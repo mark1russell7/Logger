@@ -9,3 +9,6 @@ npm-debug.log*
 package-lock.json.bak
 *.tsbuildinfo
 cue.mod/pkg/
+
+# Build output: the release builds it, and npm has each version.
+dist/

@@ -18,7 +18,9 @@
     "clean": "rm -rf dist .tsbuildinfo",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "check:conventions": "conventions check",
+    "check:api": "api-report check"
   },
   "keywords": [],
   "author": "",
@@ -38,12 +40,24 @@
   ],
   "sideEffects": false,
   "devDependencies": {
-    "typescript": "^5.9.3",
+    "@mark1russell7/api-report": "^0.1.0",
+    "@mark1russell7/conventions": "^0.1.0",
     "@mark1russell7/cue": "^1.0.2",
-    "vitest": "^3.0.0",
-    "@mark1russell7/test": "github:mark1russell7/test#main"
+    "@mark1russell7/test": "github:mark1russell7/test#11cc15dac38a6fc81dc497e46768c944c333a335",
+    "typescript": "^5.9.3",
+    "vitest": "^3.0.0"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "conventions": {
+    "rules": {
+      "required-scripts": {
+        "scripts": [
+          "typecheck"
+        ],
+        "reason": "The logger never adopted the STE prose standard (ste-lint): its README is not STE, and no rule document of this repository asks for it. The rule still examines typecheck."
+      }
+    }
   }
 }
