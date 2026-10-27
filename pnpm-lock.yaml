@@ -166,11 +166,17 @@ importers:
 
   .:
     devDependencies:
+      '@mark1russell7/api-report':
+        specifier: ^0.1.0
+        version: 0.1.0
+      '@mark1russell7/conventions':
+        specifier: ^0.1.0
+        version: 0.1.0
       '@mark1russell7/cue':
         specifier: ^1.0.2
         version: 1.0.2
       '@mark1russell7/test':
-        specifier: github:mark1russell7/test#main
+        specifier: github:mark1russell7/test#11cc15dac38a6fc81dc497e46768c944c333a335
         version: https://codeload.github.com/mark1russell7/test/tar.gz/11cc15dac38a6fc81dc497e46768c944c333a335
       typescript:
         specifier: ^5.9.3
@@ -340,13 +346,23 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
+  '@mark1russell7/api-report@0.1.0':
+    resolution: {integrity: sha512-zvYHmeL6CCIPVRlvUbsuScac5TmCU3+eDyj/0Uh6Yp/f+GOsJT8ainKkXsIkq0RxBEjpeJl6po0PNj4Ywnzt1Q==}
+    engines: {node: '>=22'}
+    hasBin: true
+
+  '@mark1russell7/conventions@0.1.0':
+    resolution: {integrity: sha512-t+bgIx6i0ohbeChzoRW6mQagKplqmr6vtRFmgO/zE2ptUedLfsXf4qLVaDT93+pohqK/zGrQHLagHT+HPa++2w==}
+    engines: {node: '>=22'}
+    hasBin: true
+
   '@mark1russell7/cue@1.0.2':
     resolution: {integrity: sha512-ketUJQeJ4eLSmw0X3NpWrGHxXVg30MpMfw/wYdzlpwf7J94BQmmOM80VuGL4OPC4tXczmTj5LWxNdM7NoQKgeA==}
     engines: {node: '>=22'}
     hasBin: true
 
   '@mark1russell7/test@https://codeload.github.com/mark1russell7/test/tar.gz/11cc15dac38a6fc81dc497e46768c944c333a335':
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/mark1russell7/test/tar.gz/11cc15dac38a6fc81dc497e46768c944c333a335}
+    resolution: {gitHosted: true, integrity: sha512-EOgQCoE0LmLyqJ3UN6YNZ4MTZnZfEybCdQu4y4F6QZtN9eHgvlxofZJOTOjfS7oDOK6zEXmS5MIO1ajCL1QjJg==, tarball: https://codeload.github.com/mark1russell7/test/tar.gz/11cc15dac38a6fc81dc497e46768c944c333a335}
     version: 0.0.0
 
   '@rollup/rollup-android-arm-eabi@4.54.0':
@@ -797,6 +813,10 @@ snapshots:
     optional: true
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
+
+  '@mark1russell7/api-report@0.1.0': {}
+
+  '@mark1russell7/conventions@0.1.0': {}
 
   '@mark1russell7/cue@1.0.2': {}
 

@@ -67,12 +67,6 @@ graph TB
 npm install @mark1russell7/logger
 ```
 
-Or from GitHub:
-
-```bash
-npm install github:mark1russell7/logger#main
-```
-
 ### Prerequisites
 
 - Node.js >= 25.0.0

@@ -1,0 +1,193 @@
+# The public API of @mark1russell7/logger
+#
+# The names of each entry of the exports field, and the declaration of each name, without comments
+# and private members. The command `api-report check` compares this file with the built .d.ts files.
+# To accept a change of the API, start the build, then `api-report update`, and review the diff.
+
+## . (dist/index.d.ts): 27 names
+
+CallbackTransport: dist/transports.d.ts#CallbackTransport
+type CallbackTransportOptions: dist/transports.d.ts#CallbackTransportOptions
+ConsoleTransport: dist/transports.d.ts#ConsoleTransport
+type ConsoleTransportOptions: dist/transports.d.ts#ConsoleTransportOptions
+type Formatter: dist/types.d.ts#Formatter
+JsonFormatter: dist/formatters.d.ts#JsonFormatter
+LOG_LEVEL_NAMES: dist/types.d.ts#LOG_LEVEL_NAMES
+type LogEntry: dist/types.d.ts#LogEntry
+LogLevel: dist/types.d.ts#LogLevel
+type LogOptions: dist/types.d.ts#LogOptions
+Logger: dist/logger.d.ts#Logger
+type LoggerOptions: dist/types.d.ts#LoggerOptions
+MemoryTransport: dist/transports.d.ts#MemoryTransport
+SimpleFormatter: dist/formatters.d.ts#SimpleFormatter
+TimestampedFormatter: dist/formatters.d.ts#TimestampedFormatter
+type Transport: dist/types.d.ts#Transport
+createCallbackTransport: dist/transports.d.ts#createCallbackTransport
+createConsoleTransport: dist/transports.d.ts#createConsoleTransport
+createJsonFormatter: dist/formatters.d.ts#createJsonFormatter
+createLogger: dist/logger.d.ts#createLogger
+createMemoryTransport: dist/transports.d.ts#createMemoryTransport
+createSimpleFormatter: dist/formatters.d.ts#createSimpleFormatter
+createTimestampedFormatter: dist/formatters.d.ts#createTimestampedFormatter
+getDefaultLogger: dist/logger.d.ts#getDefaultLogger
+parseLogLevel: dist/types.d.ts#parseLogLevel
+resetDefaultLogger: dist/logger.d.ts#resetDefaultLogger
+setDefaultLogger: dist/logger.d.ts#setDefaultLogger
+
+## Declarations
+
+### dist/formatters.d.ts#JsonFormatter
+export declare class JsonFormatter implements Formatter {
+    format(entry: LogEntry): string;
+}
+
+### dist/formatters.d.ts#SimpleFormatter
+export declare class SimpleFormatter implements Formatter {
+    format(entry: LogEntry): string;
+}
+
+### dist/formatters.d.ts#TimestampedFormatter
+export declare class TimestampedFormatter implements Formatter {
+    format(entry: LogEntry): string;
+}
+
+### dist/formatters.d.ts#createJsonFormatter
+export declare function createJsonFormatter(): Formatter;
+
+### dist/formatters.d.ts#createSimpleFormatter
+export declare function createSimpleFormatter(): Formatter;
+
+### dist/formatters.d.ts#createTimestampedFormatter
+export declare function createTimestampedFormatter(): Formatter;
+
+### dist/logger.d.ts#Logger
+export declare class Logger {
+    constructor(options?: LoggerOptions);
+    log(level: LogLevel, message: string, options?: LogOptions): void;
+    error(message: string, options?: LogOptions): void;
+    errorWithException(message: string, error: Error, options?: Omit<LogOptions, "error">): void;
+    warn(message: string, options?: LogOptions): void;
+    info(message: string, options?: LogOptions): void;
+    debug(message: string, options?: LogOptions): void;
+    trace(message: string, options?: LogOptions): void;
+    child(context: string): Logger;
+    setLevel(level: LogLevel): void;
+    getLevel(): LogLevel;
+    addTransport(transport: Transport): void;
+    removeTransport(name: string): boolean;
+    flush(): Promise<void>;
+    close(): Promise<void>;
+}
+
+### dist/logger.d.ts#createLogger
+export declare function createLogger(options?: LoggerOptions): Logger;
+
+### dist/logger.d.ts#getDefaultLogger
+export declare function getDefaultLogger(): Logger;
+
+### dist/logger.d.ts#resetDefaultLogger
+export declare function resetDefaultLogger(): void;
+
+### dist/logger.d.ts#setDefaultLogger
+export declare function setDefaultLogger(logger: Logger): void;
+
+### dist/transports.d.ts#CallbackTransport
+export declare class CallbackTransport implements Transport {
+    readonly name = "callback";
+    constructor(options: CallbackTransportOptions);
+    setDefaultFormatter(formatter: Formatter): void;
+    write(entry: LogEntry): void | Promise<void>;
+}
+
+### dist/transports.d.ts#CallbackTransportOptions
+export interface CallbackTransportOptions {
+    callback: (entry: LogEntry, formatted: string) => void | Promise<void>;
+    formatter?: Formatter;
+}
+
+### dist/transports.d.ts#ConsoleTransport
+export declare class ConsoleTransport implements Transport {
+    readonly name = "console";
+    constructor(options?: ConsoleTransportOptions);
+    setDefaultFormatter(formatter: Formatter): void;
+    write(entry: LogEntry): void;
+}
+
+### dist/transports.d.ts#ConsoleTransportOptions
+export interface ConsoleTransportOptions {
+    formatter?: Formatter;
+    colors?: boolean;
+}
+
+### dist/transports.d.ts#MemoryTransport
+export declare class MemoryTransport implements Transport {
+    readonly name = "memory";
+    readonly entries: LogEntry[];
+    write(entry: LogEntry): void;
+    clear(): void;
+    getEntries(level?: LogLevel): LogEntry[];
+}
+
+### dist/transports.d.ts#createCallbackTransport
+export declare function createCallbackTransport(options: CallbackTransportOptions): Transport;
+
+### dist/transports.d.ts#createConsoleTransport
+export declare function createConsoleTransport(options?: ConsoleTransportOptions): Transport;
+
+### dist/transports.d.ts#createMemoryTransport
+export declare function createMemoryTransport(): MemoryTransport;
+
+### dist/types.d.ts#Formatter
+export interface Formatter {
+    format(entry: LogEntry): string;
+}
+
+### dist/types.d.ts#LOG_LEVEL_NAMES
+export declare const LOG_LEVEL_NAMES: Record<LogLevel, string>;
+
+### dist/types.d.ts#LogEntry
+export interface LogEntry {
+    level: LogLevel;
+    message: string;
+    context?: string;
+    timestamp: Date;
+    data?: Record<string, unknown>;
+    error?: Error;
+}
+
+### dist/types.d.ts#LogLevel
+export declare enum LogLevel {
+    ERROR = 0,
+    WARN = 1,
+    INFO = 2,
+    DEBUG = 3,
+    TRACE = 4
+}
+
+### dist/types.d.ts#LogOptions
+export interface LogOptions {
+    context?: string;
+    data?: Record<string, unknown>;
+    error?: Error;
+}
+
+### dist/types.d.ts#LoggerOptions
+export interface LoggerOptions {
+    level?: LogLevel;
+    context?: string;
+    transports?: Transport[];
+    formatter?: Formatter;
+    onTransportError?: (error: unknown, transport: Transport) => void;
+}
+
+### dist/types.d.ts#Transport
+export interface Transport {
+    name: string;
+    write(entry: LogEntry): void | Promise<void>;
+    flush?(): void | Promise<void>;
+    close?(): void | Promise<void>;
+    setDefaultFormatter?(formatter: Formatter): void;
+}
+
+### dist/types.d.ts#parseLogLevel
+export declare function parseLogLevel(level: string): LogLevel | null;
