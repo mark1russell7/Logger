@@ -168,13 +168,13 @@ importers:
     devDependencies:
       '@mark1russell7/api-report':
         specifier: ^0.2.0
-        version: 0.2.0
+        version: 0.2.1
       '@mark1russell7/conventions':
-        specifier: ^0.4.0
-        version: 0.4.0
+        specifier: ^0.12.2
+        version: 0.12.2
       '@mark1russell7/cue':
         specifier: ^1.0.2
-        version: 1.0.2
+        version: 1.1.0
       '@mark1russell7/test':
         specifier: github:mark1russell7/test#11cc15dac38a6fc81dc497e46768c944c333a335
         version: https://codeload.github.com/mark1russell7/test/tar.gz/11cc15dac38a6fc81dc497e46768c944c333a335
@@ -346,18 +346,18 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
-  '@mark1russell7/api-report@0.2.0':
-    resolution: {integrity: sha512-09QIGN/YGpbIgovGQ3uzPCWFwDazOBq8s7qhfi/FU2mo1c0M/iaF9EE+1psdZxN4o9Y1U4oU7zkGYLsfCvvMMg==}
+  '@mark1russell7/api-report@0.2.1':
+    resolution: {integrity: sha512-3bP316h+Thc6m4W2yvame5wTvDIMp7JDCM5CQBvDWZtjfsgr02Z7Vii9YjuPvogvkWvA4t09ihhnr73h0IKkRQ==}
     engines: {node: '>=22'}
     hasBin: true
 
-  '@mark1russell7/conventions@0.4.0':
-    resolution: {integrity: sha512-6L5L9yPEz5XNqtevOspgvPSGYVD8RxeBL2trnpfIm5ugFEABdO0Q5VhApXODLF+WT3gBQ236oPHlr9I7s85hxg==}
+  '@mark1russell7/conventions@0.12.2':
+    resolution: {integrity: sha512-y1IrZG8yZwDTYbbnwcdR4o1IIsu31HIST2ouvd6D15FPk5lOIJVubgLzOLmjTVLlXF+IG5E0Dyeu2jtIu+72nw==}
     engines: {node: '>=22'}
     hasBin: true
 
-  '@mark1russell7/cue@1.0.2':
-    resolution: {integrity: sha512-ketUJQeJ4eLSmw0X3NpWrGHxXVg30MpMfw/wYdzlpwf7J94BQmmOM80VuGL4OPC4tXczmTj5LWxNdM7NoQKgeA==}
+  '@mark1russell7/cue@1.1.0':
+    resolution: {integrity: sha512-R9pjuWNFqd/LSfOI8uY7w8E2Dri8UQFGLodBuV4d2E0pwzWM5ISVXWVhC7+aYgrR1GXSMzbyo5ZLWvqyQCwdIg==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -814,11 +814,11 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@mark1russell7/api-report@0.2.0': {}
+  '@mark1russell7/api-report@0.2.1': {}
 
-  '@mark1russell7/conventions@0.4.0': {}
+  '@mark1russell7/conventions@0.12.2': {}
 
-  '@mark1russell7/cue@1.0.2': {}
+  '@mark1russell7/cue@1.1.0': {}
 
   '@mark1russell7/test@https://codeload.github.com/mark1russell7/test/tar.gz/11cc15dac38a6fc81dc497e46768c944c333a335': {}
 
