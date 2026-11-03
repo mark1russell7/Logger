@@ -9,6 +9,25 @@ afterEach(() => {
   vi.restoreAllMocks();
 });
 
+describe("a write that fails at once", () => {
+  it("reports the change after the record exists", async () => {
+    const newest: (string | undefined)[] = [];
+    let watching = false;
+    const lab = new Lab(() => {
+      if (watching) newest.push(lab.traces[0]?.message);
+    }, { batchSendMs: 1, slowCallbackMs: 1 });
+    lab.setTransport(lab.root, "batch", true);
+    await lab.finish(lab.root, "close");
+    watching = true;
+
+    const trace = lab.emit(lab.root, LogLevel.INFO, "After the close");
+
+    expect(trace.deliveries.find((delivery) => delivery.transport === "batch")?.state).toBe("failed");
+    expect(lab.failures[0]?.transport).toBe("batch");
+    expect(newest).toEqual(["After the close"]);
+  });
+});
+
 describe("the filter", () => {
   it("records a pass only when the real logger calls the tap", () => {
     const lab = fast();

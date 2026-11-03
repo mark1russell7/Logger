@@ -270,7 +270,8 @@ export class Lab {
       transports: [tap, this.observed.console, this.observed.memory],
       onTransportError: (error, transport) => {
         this.failures.unshift({ transport: transport.name, message: messageOf(error) });
-        this.changed();
+        // A write that fails at once is in `emit`, and `emit` reports the change after it adds the record.
+        if (this.current === undefined) this.changed();
       },
     });
     this.nodes.push({ id: this.nextId++, name: "app", context: "app", depth: 0, logger, attached: new Set(["console", "memory"]) });
