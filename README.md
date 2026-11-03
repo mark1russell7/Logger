@@ -5,6 +5,8 @@
 
 > Standalone logger with configurable transports and formatters
 
+**[Try it live](https://mark1russell7.github.io/Logger/):** set a level, send a record, and see the real package filter, format and deliver it.
+
 ## Overview
 
 `@mark1russell7/logger` is a lightweight, zero-dependency logging library for TypeScript/JavaScript applications. It provides structured logging with configurable output formats, multiple transports, and contextual logging capabilities.

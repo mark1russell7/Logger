@@ -10,17 +10,17 @@
   "bugs": {
     "url": "https://github.com/mark1russell7/Logger/issues"
   },
-  "homepage": "https://github.com/mark1russell7/Logger#readme",
+  "homepage": "https://mark1russell7.github.io/Logger/",
   "main": "./dist/index.js",
   "scripts": {
     "build": "tsc -b",
-    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json && pnpm --filter @logger/site run typecheck",
     "clean": "rm -rf dist .tsbuildinfo",
-    "test": "vitest run",
+    "test": "vitest run && pnpm --filter @logger/site run test",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "check:conventions": "conventions check",
-    "check:api": "api-report check"
+    "check:api": "api-report check ."
   },
   "keywords": [],
   "author": "",
