@@ -1,3 +1,7 @@
+# The site of GitHub Pages is a private package of the workspace. The root is the published package.
+packages:
+  - "site"
+
 # Packages allowed to run install scripts. Since pnpm 11 every other package that has one fails the install.
 allowBuilds:
   esbuild: true

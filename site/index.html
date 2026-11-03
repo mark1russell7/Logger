@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>logger: watch each record pass the filter, the formatter and the transports</title>
+    <meta name="description" content="A zero-dependency TypeScript logger, live in the browser. Set a level, pick a formatter, add transports and child loggers, and see the path of each record, with the records that the level drops." />
+    <meta name="color-scheme" content="light dark" />
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%2312181f'/%3E%3Cpath d='M7 8h18' stroke='%23ff8f85' stroke-width='3'/%3E%3Cpath d='M7 13h15' stroke='%23f2bd4e' stroke-width='3'/%3E%3Cpath d='M7 18h12' stroke='%237db8ff' stroke-width='3'/%3E%3Cpath d='M7 23h7' stroke='%23bda2ff' stroke-width='3'/%3E%3C/svg%3E" />
+    <script>
+      // The saved theme applies before the first paint, so a dark page does not flash white.
+      try {
+        const t = localStorage.getItem("logger-theme");
+        if (t === "light" || t === "dark") document.documentElement.dataset.theme = t;
+      } catch {}
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#lab">Skip to the live console</a>
+    <header class="top">
+      <div class="brand">
+        <h1 class="wordmark"><span class="mark" aria-hidden="true"><i class="l-error"></i><i class="l-warn"></i><i class="l-info"></i><i class="l-debug"></i><i class="l-trace"></i></span>logger</h1>
+        <p class="lead">A zero-dependency TypeScript logger with levels, child contexts, formatters and transports. The real package runs on this page. Send a record, and see where it goes.</p>
+      </div>
+      <nav class="links" aria-label="Site">
+        <a href="#lab">Try it</a>
+        <a href="#how">How it works</a>
+        <a href="#api">API</a>
+        <a href="#install">Install</a>
+        <a href="releases/">Releases</a>
+        <a href="status/">Status</a>
+        <a href="https://github.com/mark1russell7/Logger">GitHub</a>
+        <button id="theme" class="theme" type="button">Theme</button>
+      </nav>
+    </header>
+
+    <main>
+      <section id="lab" class="lab" aria-label="Live console">
+        <aside class="controls">
+          <div class="panel">
+            <h2>Send a record</h2>
+            <label class="field-label" for="message">Message</label>
+            <input id="message" type="text" value="Order 1043 shipped" autocomplete="off" spellcheck="false" />
+            <div id="emit" class="emit" role="group" aria-label="Send at a level">
+              <button type="button" class="l-error" data-emit="error">error</button>
+              <button type="button" class="l-warn" data-emit="warn">warn</button>
+              <button type="button" class="l-info" data-emit="info">info</button>
+              <button type="button" class="l-debug" data-emit="debug">debug</button>
+              <button type="button" class="l-trace" data-emit="trace">trace</button>
+            </div>
+            <button id="burst" type="button" class="quiet">Send at all five levels</button>
+            <details id="more">
+              <summary>Add data, an error or a context</summary>
+              <label class="field-label" for="data">Data, as a JSON object</label>
+              <input id="data" type="text" placeholder='{"orderId":42}' autocomplete="off" spellcheck="false" />
+              <p id="data-error" class="problem" hidden>Write a JSON object, for example {"orderId":42}.</p>
+              <label class="check"><input id="with-error" type="checkbox" /> Add an <code>Error</code> object</label>
+              <label class="field-label" for="context">Context for this record only</label>
+              <input id="context" type="text" placeholder="billing" autocomplete="off" spellcheck="false" />
+            </details>
+          </div>
+
+          <div class="panel">
+            <h2>Loggers</h2>
+            <p class="hint">Select a logger. The other controls change the selected logger.</p>
+            <ul id="tree" class="tree"></ul>
+            <div class="inline">
+              <label class="sr" for="child-name">Name of the child logger</label>
+              <input id="child-name" type="text" autocomplete="off" spellcheck="false" />
+              <button id="add-child" type="button">Add child</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Level of <code id="level-of">app</code></h2>
+            <div id="level" class="choices" role="group" aria-label="Level of the selected logger">
+              <button type="button" class="l-error" data-level="error" aria-pressed="false">ERROR</button>
+              <button type="button" class="l-warn" data-level="warn" aria-pressed="false">WARN</button>
+              <button type="button" class="l-info" data-level="info" aria-pressed="false">INFO</button>
+              <button type="button" class="l-debug" data-level="debug" aria-pressed="false">DEBUG</button>
+              <button type="button" class="l-trace" data-level="trace" aria-pressed="false">TRACE</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Formatter</h2>
+            <div id="formatter" class="choices" role="group" aria-label="Formatter">
+              <button type="button" data-formatter="simple" aria-pressed="false">Simple</button>
+              <button type="button" data-formatter="timestamped" aria-pressed="false">Timestamped</button>
+              <button type="button" data-formatter="json" aria-pressed="false">JSON</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h2>Transports of <code id="transports-of">app</code></h2>
+            <div id="transports" class="checks">
+              <label class="check"><input type="checkbox" data-transport="console" /> Console</label>
+              <label class="check"><input type="checkbox" data-transport="memory" /> Memory</label>
+              <label class="check"><input type="checkbox" data-transport="callback" /> Callback</label>
+              <label class="check"><input type="checkbox" data-transport="batch" /> Batch, with flush and close</label>
+            </div>
+            <p class="hint">A child copies the list of its parent once.</p>
+          </div>
+
+          <div class="panel">
+            <h2>Flush and close <code id="finish-of">app</code></h2>
+            <div class="inline">
+              <button id="flush" type="button">Flush</button>
+              <button id="close" type="button">Close</button>
+              <button id="reset" type="button" class="quiet">Start again</button>
+            </div>
+            <p id="lifecycle" class="hint" role="status"></p>
+          </div>
+        </aside>
+
+        <div class="stagebox">
+          <h2 class="sr">The path of the selected record</h2>
+          <div id="pipeline" class="pipeline"></div>
+
+          <div class="panel records">
+            <div class="records-head">
+              <h2>Records</h2>
+              <dl class="stats">
+                <div><dt>Sent</dt><dd id="stat-sent">0</dd></div>
+                <div><dt>Passed</dt><dd id="stat-passed">0</dd></div>
+                <div><dt>Dropped</dt><dd id="stat-dropped">0</dd></div>
+                <div><dt>Failed writes</dt><dd id="stat-failed">0</dd></div>
+              </dl>
+            </div>
+            <ol id="records" class="record-list"></ol>
+          </div>
+        </div>
+      </section>
+
+      <section id="destinations" aria-label="What each transport received">
+        <h2>What each transport received</h2>
+        <div id="transport-errors" class="failures" hidden>
+          <h3>Transport failures</h3>
+          <p class="hint">The hook <code>onTransportError</code> got these failures. The other transports still got the record.</p>
+          <ul id="failure-rows"></ul>
+        </div>
+        <div class="destinations">
+          <article class="panel">
+            <h3>Console</h3>
+            <p id="console-on" class="hint"></p>
+            <ul id="console-lines" class="lines"></ul>
+            <label class="check"><input id="devtools" type="checkbox" /> Also send to the console of DevTools</label>
+          </article>
+          <article class="panel">
+            <div class="card-head">
+              <h3>Memory</h3>
+              <span class="count"><span id="memory-count">0</span> entries</span>
+            </div>
+            <p id="memory-on" class="hint"></p>
+            <ul id="memory-rows" class="lines"></ul>
+            <div class="inline">
+              <label class="sr" for="memory-level">Show one level</label>
+              <select id="memory-level">
+                <option value="all">All levels</option>
+                <option value="error">ERROR</option>
+                <option value="warn">WARN</option>
+                <option value="info">INFO</option>
+                <option value="debug">DEBUG</option>
+                <option value="trace">TRACE</option>
+              </select>
+              <button id="memory-clear" type="button" class="quiet">Clear</button>
+            </div>
+          </article>
+          <article class="panel">
+            <h3>Callback</h3>
+            <p id="callback-on" class="hint"></p>
+            <ul id="callback-rows" class="lines"></ul>
+            <label class="field-label" for="callback-mode">The callback</label>
+            <select id="callback-mode">
+              <option value="ok">returns at once</option>
+              <option value="slow">returns a slow promise</option>
+              <option value="throws">throws an error</option>
+              <option value="rejects">rejects its promise</option>
+            </select>
+          </article>
+          <article class="panel">
+            <div class="card-head">
+              <h3>Batch</h3>
+              <span id="batch-state" class="count" data-state="open">Open</span>
+            </div>
+            <p id="batch-on" class="hint"></p>
+            <h4>Waiting for a flush</h4>
+            <ul id="batch-pending" class="lines short"></ul>
+            <h4>Sent</h4>
+            <ul id="batch-sent" class="lines short"></ul>
+          </article>
+        </div>
+      </section>
+
+      <section id="calls-section" aria-label="The calls of this session">
+        <h2>The calls you made</h2>
+        <p class="hint">The newest call is first. Each line is a call of the package that the page made for you.</p>
+        <ol id="calls" class="calls"></ol>
+      </section>
+
+      <section id="how">
+        <h2>How it works</h2>
+        <ol class="steps">
+          <li><strong>The filter.</strong> <code>Logger.log</code> compares the two levels first. If the level of the record is more verbose, the call returns. The logger makes nothing.</li>
+          <li><strong>The entry.</strong> The logger makes one <code>LogEntry</code> with the level, the message, the time, the context, the data and the error.</li>
+          <li><strong>The transports.</strong> The logger gives the same entry to each transport, in sequence. A failed write goes to <code>onTransportError</code>, and the next transport still runs.</li>
+          <li><strong>The formatter.</strong> Each transport that writes text calls its own formatter. The memory transport keeps the entry and uses no formatter.</li>
+        </ol>
+        <h3>How this page watches the logger</h3>
+        <ul class="plain">
+          <li>The page imports <code>src/index.ts</code> of the repository. Each result on this page comes from that code.</li>
+          <li>A hidden transport sits first on each logger. <code>Logger.log</code> calls it only for a record that passes, so the page does not repeat the level check.</li>
+          <li><code>ConsoleTransport</code> calls <code>console.error</code> and the other methods. The page catches these calls and shows them. A checkbox also sends them to DevTools.</li>
+          <li>The package has no call that changes the formatter of a running logger. So the page gives each transport one object, and that object forwards to the formatter that you pick.</li>
+          <li>The built-in transports have no <code>flush</code> or <code>close</code>. The batch transport below is part of this site, and it uses only the public <code>Transport</code> interface.</li>
+        </ul>
+        <div class="codehead">
+          <h3>The batch transport</h3>
+          <button type="button" class="quiet" data-copy="batch-source">Copy</button>
+        </div>
+        <pre class="scroll-cue codeblock"><code id="batch-source"></code></pre>
+      </section>
+
+      <section id="api">
+        <h2>API</h2>
+        <p class="hint">Each result below comes from a call of the package when this page opened.</p>
+        <table class="api">
+          <thead>
+            <tr><th scope="col">Name</th><th scope="col">What it does</th><th scope="col">Live result</th></tr>
+          </thead>
+          <tbody id="api-rows"></tbody>
+        </table>
+      </section>
+
+      <section id="install">
+        <h2>Install</h2>
+        <div class="codehead">
+          <h3>From npm</h3>
+          <button type="button" class="quiet" data-copy="install-cmd">Copy</button>
+        </div>
+        <pre class="scroll-cue codeblock"><code id="install-cmd">npm install @mark1russell7/logger</code></pre>
+        <div class="codehead">
+          <h3>First logger</h3>
+          <button type="button" class="quiet" data-copy="first-logger">Copy</button>
+        </div>
+        <pre class="scroll-cue codeblock"><code id="first-logger">import { createLogger, createJsonFormatter, LogLevel } from "@mark1russell7/logger";
+
+const log = createLogger({ level: LogLevel.DEBUG, context: "app", formatter: createJsonFormatter() });
+const db = log.child("db");
+
+db.info("Connected", { data: { host: "localhost" } });
+log.debug("Ready");
+log.trace("The level drops this record.");</code></pre>
+      </section>
+    </main>
+
+    <footer class="foot">
+      <p>MIT license. <a href="https://github.com/mark1russell7/Logger">Source on GitHub</a>.</p>
+      <p id="build"></p>
+    </footer>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>
