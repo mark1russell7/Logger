@@ -14,7 +14,7 @@
   },
   "dependencies": {
     "@mark1russell7/logger": "workspace:*",
-    "@mark1russell7/site-pages": "^0.1.10"
+    "@mark1russell7/site-pages": "^0.2.0"
   },
   "devDependencies": {
     "@mark1russell7/cue": "^1.0.2",
