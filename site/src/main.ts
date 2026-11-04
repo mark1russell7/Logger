@@ -1,5 +1,5 @@
 // The start of the page: the theme, the live console, the API table and the build line.
-import { byId, copyText, h, setupTheme } from "@mark1russell7/site-pages/chrome";
+import { byId, copyText, h, setupTheme, showBuild } from "@mark1russell7/site-pages/chrome";
 import "@mark1russell7/site-pages/scroll-cue.css";
 import { API, result } from "./api.ts";
 import { App } from "./app.ts";
@@ -30,8 +30,4 @@ for (const button of document.querySelectorAll<HTMLButtonElement>("button[data-c
   button.addEventListener("click", () => void copyText(button, byId(button.dataset["copy"] ?? "").textContent ?? ""));
 }
 
-byId("build").append(
-  `Version ${__BUILD__.version}, build `,
-  __BUILD__.sha === "local" ? "local" : h("a", { href: `https://github.com/mark1russell7/Logger/commit/${__BUILD__.sha}` }, __BUILD__.sha),
-  ` of ${__BUILD__.date}`,
-);
+showBuild(byId("build"), __BUILD__, "mark1russell7/Logger");
