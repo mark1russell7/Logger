@@ -7,8 +7,8 @@ import {
   resetDefaultLogger,
 } from "../logger.js";
 import { LogLevel } from "../types.js";
-import type { Transport, LogEntry } from "../types.js";
-import { createCallbackTransport } from "../transports.js";
+import type { Transport, LogEntry, LoggerOptions } from "../types.js";
+import { createCallbackTransport, createConsoleTransport } from "../transports.js";
 import { JsonFormatter, SimpleFormatter } from "../formatters.js";
 
 function createMockTransport(): Transport & { entries: LogEntry[] } {
@@ -314,6 +314,93 @@ describe("Logger", () => {
 
       expect(transport.close).toHaveBeenCalled();
     });
+
+    it("flush() and close() wait for a promise of the transport", async () => {
+      for (const method of ["flush", "close"] as const) {
+        let release = () => {};
+        const gate = new Promise<void>((resolve) => {
+          release = resolve;
+        });
+        const logger = new Logger({
+          transports: [{ name: "slow", write: () => {}, [method]: () => gate }],
+        });
+
+        let settled = false;
+        const finished = logger[method]().then(() => {
+          settled = true;
+        });
+
+        await Promise.resolve();
+        await Promise.resolve();
+        expect(settled).toBe(false);
+
+        release();
+        await finished;
+        expect(settled).toBe(true);
+      }
+    });
+
+    it("flush() and close() do not wait for a pending write", async () => {
+      for (const method of ["flush", "close"] as const) {
+        let release = () => {};
+        let written = false;
+        const logger = new Logger({
+          transports: [
+            createCallbackTransport({
+              callback: async () => {
+                await new Promise<void>((resolve) => {
+                  release = resolve;
+                });
+                written = true;
+              },
+            }),
+          ],
+        });
+
+        logger.info("hello");
+        await logger[method]();
+
+        // The promise of the logger is done, and the write still waits.
+        expect(written).toBe(false);
+        release();
+      }
+    });
+
+    it("flush() rejects when a transport fails, and does not call onTransportError", async () => {
+      const onTransportError = vi.fn();
+      const logger = new Logger({
+        transports: [
+          {
+            name: "broken",
+            write: () => {},
+            flush: () => Promise.reject(new Error("flush failed")),
+          },
+        ],
+        onTransportError,
+      });
+
+      await expect(logger.flush()).rejects.toThrow("flush failed");
+      expect(onTransportError).not.toHaveBeenCalled();
+    });
+
+    it("close() stops at a transport that throws synchronously", async () => {
+      const later = vi.fn();
+      const logger = new Logger({
+        transports: [
+          {
+            name: "broken",
+            write: () => {},
+            close: () => {
+              throw new Error("close failed");
+            },
+          },
+          { name: "later", write: () => {}, close: later },
+        ],
+      });
+
+      await expect(logger.close()).rejects.toThrow("close failed");
+      expect(later).not.toHaveBeenCalled();
+    });
   });
 
   describe("default formatter (LoggerOptions.formatter)", () => {
@@ -347,6 +434,101 @@ describe("Logger", () => {
 
       // SimpleFormatter output (not JSON) begins with the bracketed level.
       expect(formatted.startsWith("[INFO]")).toBe(true);
+    });
+  });
+
+  describe("formatter on addTransport", () => {
+    const pair = (options: LoggerOptions) => {
+      const texts: { early?: string; late?: string } = {};
+      const early = createCallbackTransport({
+        callback: (_entry, f) => {
+          texts.early = f;
+        },
+      });
+      const late = createCallbackTransport({
+        callback: (_entry, f) => {
+          texts.late = f;
+        },
+      });
+      const logger = new Logger({ transports: [early], formatter: new JsonFormatter(), ...options });
+      return { texts, late, logger };
+    };
+
+    it("keeps the formatter of the transport by default", () => {
+      const { texts, late, logger } = pair({});
+
+      logger.addTransport(late);
+      logger.info("hello");
+
+      expect(texts.late).toBe("[INFO] hello");
+      expect(texts.early?.startsWith("{")).toBe(true);
+    });
+
+    it("gives the logger formatter with formatAddedTransports", () => {
+      const { texts, late, logger } = pair({ formatAddedTransports: true });
+
+      logger.addTransport(late);
+      logger.info("hello");
+
+      expect(texts.late).toBe(texts.early);
+    });
+
+    it("copies formatAddedTransports to a child logger", () => {
+      const { texts, late, logger } = pair({ formatAddedTransports: true });
+      const child = logger.child("db");
+
+      child.addTransport(late);
+      child.info("hello");
+
+      expect((JSON.parse(texts.late ?? "") as { context: string }).context).toBe("db");
+    });
+
+    it("keeps the own formatter of the transport with formatAddedTransports", () => {
+      let text = "";
+      const { logger } = pair({ formatAddedTransports: true });
+
+      logger.addTransport(
+        createCallbackTransport({
+          callback: (_entry, f) => {
+            text = f;
+          },
+          formatter: new SimpleFormatter(),
+        }),
+      );
+      logger.info("hello");
+
+      expect(text).toBe("[INFO] hello");
+    });
+
+    it("gives the logger formatter to a console transport with formatAddedTransports", () => {
+      const info = vi.spyOn(console, "info").mockImplementation(() => {});
+      const { logger } = pair({ formatAddedTransports: true });
+
+      logger.addTransport(createConsoleTransport());
+      logger.info("hello");
+
+      expect(String(info.mock.calls[0]?.[0]).startsWith("{")).toBe(true);
+      info.mockRestore();
+    });
+
+    it("accepts a transport without setDefaultFormatter with formatAddedTransports", () => {
+      const transport = createMockTransport();
+      const { logger } = pair({ formatAddedTransports: true });
+
+      logger.addTransport(transport);
+      logger.info("hello");
+
+      expect(transport.entries).toHaveLength(1);
+    });
+
+    it("gives the logger formatter to an added transport at child(), also by default", () => {
+      const { texts, late, logger } = pair({});
+
+      logger.addTransport(late);
+      logger.child("db");
+      logger.info("hello");
+
+      expect(texts.late).toBe(texts.early);
     });
   });
 

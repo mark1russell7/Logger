@@ -80,6 +80,20 @@ const addedFormatter = (): string => {
   return text;
 };
 
+const addedWithOption = (): string => {
+  let text = "";
+  const logger = createLogger({ formatter: createJsonFormatter(), transports: [], formatAddedTransports: true });
+  logger.addTransport(
+    createCallbackTransport({
+      callback: (_entry, formatted) => {
+        text = formatted;
+      },
+    }),
+  );
+  logger.info("Hello");
+  return text;
+};
+
 const removeTwice = (): string => {
   const { logger } = withMemory();
   return `${String(logger.removeTransport("memory"))}, ${String(logger.removeTransport("memory"))}`;
@@ -169,8 +183,11 @@ export const API: readonly ApiRow[] = [
   },
   {
     names: ["addTransport", "formatter"],
-    what: "The option `formatter` reaches only the transports in the options. A transport from `addTransport` keeps its own formatter.",
-    examples: [{ code: "createLogger({ formatter: json }), then addTransport(callback), then info", run: addedFormatter }],
+    what: "By default, the option `formatter` reaches only the transports in the options. With `formatAddedTransports`, it also reaches a transport from `addTransport`, if that transport has no formatter of its own.",
+    examples: [
+      { code: "createLogger({ formatter: json }), then addTransport(callback), then info", run: addedFormatter },
+      { code: "createLogger({ formatter: json, formatAddedTransports: true }), then addTransport(callback), then info", run: addedWithOption },
+    ],
   },
   {
     names: ["removeTransport"],
@@ -189,7 +206,7 @@ export const API: readonly ApiRow[] = [
   },
   {
     names: ["flush", "close"],
-    what: "These methods call the same method of each transport that has it. The built-in transports do not have it.",
+    what: "These methods call the same method of each transport that has it, and wait for its promise. They do not wait for a pending `write`. The built-in transports do not have it.",
     examples: [
       { code: "typeof createConsoleTransport().flush", run: () => typeof createConsoleTransport().flush },
       { code: "typeof createMemoryTransport().close", run: () => typeof (createMemoryTransport() as Transport).close },

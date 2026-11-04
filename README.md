@@ -18,7 +18,7 @@
 - **Flexible Formatting**: Simple, timestamped, and JSON formatters
 - **Contextual Logging**: Create child loggers with nested contexts
 - **Type-Safe**: Full TypeScript support with comprehensive types
-- **Async Support**: Async transport operations with flush and close
+- **Async Support**: `write`, `flush` and `close` of a transport can return a promise. `logger.flush()` and `logger.close()` wait for the promise of `flush` and `close`, not of `write`
 - **Level-Based Filtering**: ERROR, WARN, INFO, DEBUG, TRACE levels
 
 ## Architecture
@@ -175,8 +175,36 @@ interface LoggerOptions {
   context?: string;          // Default context for all logs
   transports?: Transport[];  // Array of transports (default: [ConsoleTransport])
   formatter?: Formatter;     // Default formatter (default: SimpleFormatter)
+  formatAddedTransports?: boolean; // addTransport also gives the formatter (default: false)
+  onTransportError?: (error: unknown, transport: Transport) => void; // A failed write goes here
 }
 ```
+
+The constructor gives `formatter` to each transport in `transports` that has no formatter of its own. By default, `addTransport` does not do this:
+
+```typescript
+const logger = createLogger({ formatter: createJsonFormatter(), transports: [] });
+
+logger.addTransport(createCallbackTransport({ callback }));
+logger.info("Hello"); // callback gets "[INFO] Hello"
+```
+
+Set `formatAddedTransports: true` to give `formatter` to the added transport. The text is then the same as for a transport in `transports`. A transport with its own formatter keeps it, and a child logger copies this option.
+
+```typescript
+const logger = createLogger({
+  formatter: createJsonFormatter(),
+  transports: [],
+  formatAddedTransports: true,
+});
+
+logger.addTransport(createCallbackTransport({ callback }));
+logger.info("Hello"); // callback gets the JSON text
+```
+
+The transport must have `setDefaultFormatter`. `ConsoleTransport` and `CallbackTransport` have it.
+
+`logger.child()` also gives `formatter` to each transport of the logger, with or without this option. One transport keeps one formatter, so a transport on two loggers uses the last formatter that it got.
 
 #### `LogOptions`
 
@@ -200,6 +228,7 @@ interface Transport {
   write(entry: LogEntry): void | Promise<void>;
   flush?(): void | Promise<void>;
   close?(): void | Promise<void>;
+  setDefaultFormatter?(formatter: Formatter): void;
 }
 ```
 
@@ -274,12 +303,19 @@ logger.addTransport(transport: Transport): void
 // Remove a transport by name
 logger.removeTransport(name: string): boolean
 
-// Flush all transports
+// Call flush on each transport that has it, and wait for each promise
 await logger.flush(): Promise<void>
 
-// Close all transports
+// Call close on each transport that has it, and wait for each promise
 await logger.close(): Promise<void>
 ```
+
+These limits apply to `flush()` and `close()`:
+
+- They do not wait for a pending `write`. The async callback of a `CallbackTransport` can end after `flush()` resolves.
+- `ConsoleTransport`, `MemoryTransport` and `CallbackTransport` have no `flush` or `close`. For these transports, the two calls do nothing.
+- A failed `flush` or `close` rejects the promise. The failure does not go to `onTransportError`.
+- The promise rejects at the first failure, and it does not wait for the other transports. A synchronous throw also stops the calls to the next transports.
 
 ### Utility Functions
 
@@ -790,6 +826,8 @@ process.on("beforeExit", async () => {
   await logger.close();
 });
 ```
+
+This code waits for `flush` and `close` of each transport that has them. It does not wait for a pending `write`. A transport with async writes must keep its pending writes, and wait for them in its own `flush`.
 
 ## Performance Considerations
 

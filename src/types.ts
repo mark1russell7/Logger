@@ -116,6 +116,13 @@ export interface LoggerOptions {
   /** Default formatter for transports that don't have one */
   formatter?: Formatter;
   /**
+   * When this option is true, `addTransport` gives `formatter` to the added
+   * transport, as the constructor does for `transports`. A transport with its
+   * own formatter keeps it. The default is false: the added transport keeps
+   * the formatter that it has. A child logger copies this option.
+   */
+  formatAddedTransports?: boolean;
+  /**
    * Called when a transport's `write()` throws synchronously or returns a
    * rejecting promise. Lets callers observe/report transport failures instead
    * of them surfacing as unhandled promise rejections (which crash the
