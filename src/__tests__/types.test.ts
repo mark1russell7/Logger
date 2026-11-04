@@ -21,6 +21,14 @@ describe("LogLevel", () => {
     expect(LogLevel[2]).toBe("INFO");
     expect(Object.keys(LogLevel)).toEqual(["0", "1", "2", "3", "4", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]);
   });
+
+  it("has the values of the enum in log-level.d.ts", () => {
+    // Each right side is a constant of the declared enum: tsc reads it from log-level.d.ts, and the test reads log-level.js.
+    const declared: Record<string, LogLevel> = { ERROR: 0, WARN: 1, INFO: 2, DEBUG: 3, TRACE: 4 };
+    const constants = [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE] as const;
+    expect(constants).toEqual(Object.values(declared));
+    for (const [name, value] of Object.entries(declared)) expect(LogLevel[value]).toBe(name);
+  });
 });
 
 describe("LOG_LEVEL_NAMES", () => {
