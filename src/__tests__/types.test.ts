@@ -1,3 +1,4 @@
+import { readFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";
 import { LogLevel, LOG_LEVEL_NAMES, parseLogLevel } from "../types.js";
 
@@ -22,12 +23,12 @@ describe("LogLevel", () => {
     expect(Object.keys(LogLevel)).toEqual(["0", "1", "2", "3", "4", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]);
   });
 
-  it("has the values of the enum in log-level.d.ts", () => {
-    // Each right side is a constant of the declared enum: tsc reads it from log-level.d.ts, and the test reads log-level.js.
-    const declared: Record<string, LogLevel> = { ERROR: 0, WARN: 1, INFO: 2, DEBUG: 3, TRACE: 4 };
-    const constants = [LogLevel.ERROR, LogLevel.WARN, LogLevel.INFO, LogLevel.DEBUG, LogLevel.TRACE] as const;
-    expect(constants).toEqual(Object.values(declared));
-    for (const [name, value] of Object.entries(declared)) expect(LogLevel[value]).toBe(name);
+  it("has each member of log-level.d.ts with the same value, because the two files are kept by hand", () => {
+    const declaration = readFileSync(new URL("../log-level.d.ts", import.meta.url), "utf8");
+    const members = [...declaration.matchAll(/^\s*([A-Z]+) = (\d+),$/gm)].map((m) => [m[1], Number(m[2])]);
+    expect(members).toHaveLength(5);
+    const names = Object.keys(LogLevel).filter((key) => Number.isNaN(Number(key)));
+    expect(Object.fromEntries(members)).toEqual(Object.fromEntries(names.map((name) => [name, LogLevel[name as keyof typeof LogLevel]])));
   });
 });
 
