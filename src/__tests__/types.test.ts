@@ -16,6 +16,11 @@ describe("LogLevel", () => {
     expect(LogLevel.INFO).toBeLessThan(LogLevel.DEBUG);
     expect(LogLevel.DEBUG).toBeLessThan(LogLevel.TRACE);
   });
+
+  it("keeps the number keys of a compiled enum", () => {
+    expect(LogLevel[2]).toBe("INFO");
+    expect(Object.keys(LogLevel)).toEqual(["0", "1", "2", "3", "4", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]);
+  });
 });
 
 describe("LOG_LEVEL_NAMES", () => {

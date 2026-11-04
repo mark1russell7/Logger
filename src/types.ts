@@ -9,15 +9,46 @@
 // =============================================================================
 
 /**
- * Log level enumeration.
- * Lower values = more severe.
+ * The type of each log level. This enum is ambient, so that it emits nothing.
+ * The constant `LogLevel` below holds the values, and `tsc` checks them against this enum.
  */
-export enum LogLevel {
+declare enum LogLevelEnum {
   ERROR = 0,
   WARN = 1,
   INFO = 2,
   DEBUG = 3,
   TRACE = 4,
+}
+
+/**
+ * Log level enumeration.
+ * Lower values = more severe.
+ *
+ * The object has the same keys as a compiled enum: each name, and each number with its name.
+ */
+export const LogLevel: typeof LogLevelEnum = {
+  ERROR: 0,
+  WARN: 1,
+  INFO: 2,
+  DEBUG: 3,
+  TRACE: 4,
+  0: "ERROR",
+  1: "WARN",
+  2: "INFO",
+  3: "DEBUG",
+  4: "TRACE",
+};
+
+/** One log level. */
+export type LogLevel = LogLevelEnum;
+
+/** The type of each single level, for example `LogLevel.ERROR`. */
+export declare namespace LogLevel {
+  type ERROR = LogLevelEnum.ERROR;
+  type WARN = LogLevelEnum.WARN;
+  type INFO = LogLevelEnum.INFO;
+  type DEBUG = LogLevelEnum.DEBUG;
+  type TRACE = LogLevelEnum.TRACE;
 }
 
 /**
