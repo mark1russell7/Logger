@@ -177,6 +177,7 @@ export interface LoggerOptions {
     context?: string;
     transports?: Transport[];
     formatter?: Formatter;
+    formatAddedTransports?: boolean;
     onTransportError?: (error: unknown, transport: Transport) => void;
 }
 

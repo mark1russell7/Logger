@@ -195,6 +195,16 @@ describe("flush and close", () => {
     expect(lab.failures[0]).toEqual({ transport: "batch", message: "The batch transport is closed." });
   });
 
+  it("does not wait for a pending write", async () => {
+    const lab = new Lab(() => {}, { batchSendMs: 1, slowCallbackMs: 20 });
+    lab.setTransport(lab.root, "callback", true);
+    lab.callbackMode = "slow";
+    const delivery = lab.emit(lab.root, LogLevel.INFO, "Hello").deliveries.at(-1);
+    await lab.finish(lab.root, "flush");
+    expect(delivery?.state).toBe("pending");
+    await vi.waitFor(() => expect(delivery?.state).toBe("done"));
+  });
+
   it("does nothing for a logger with only the built-in transports", async () => {
     const lab = fast();
     expect(await lab.finish(lab.root, "flush")).toMatchObject({ with: [], without: ["console", "memory"], lines: 0 });
@@ -246,7 +256,8 @@ describe("the API table", () => {
     expect(of('removeTransport("memory") twice')).toBe("true, false");
     expect(of("close(), then info, then memory.entries.length")).toBe("1");
     expect(of("createLogger({ transports: [broken, memory], onTransportError })")).toBe("broken: Disk full, memory has 1");
-    // A transport from `addTransport` keeps its own formatter. The site shows this fact of the package 1.0.0.
+    // By default, a transport from `addTransport` keeps its own formatter. The option changes this.
     expect(of("createLogger({ formatter: json }), then addTransport(callback), then info")).toBe("[INFO] Hello");
+    expect(of("createLogger({ formatter: json, formatAddedTransports: true }), then addTransport(callback), then info")).toMatch(/^\{"level":"INFO","message":"Hello"/);
   });
 });

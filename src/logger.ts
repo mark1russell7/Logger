@@ -22,6 +22,7 @@ export class Logger {
   private transports: Transport[];
   private formatter: Formatter;
   private onTransportError: ((error: unknown, transport: Transport) => void) | undefined;
+  private readonly formatAddedTransports: boolean;
 
   constructor(options: LoggerOptions = {}) {
     this.level = options.level ?? LogLevel.INFO;
@@ -29,6 +30,7 @@ export class Logger {
     this.transports = options.transports ?? [new ConsoleTransport()];
     this.formatter = options.formatter ?? new SimpleFormatter();
     this.onTransportError = options.onTransportError;
+    this.formatAddedTransports = options.formatAddedTransports ?? false;
 
     // Apply the logger's default formatter to any transport that was not
     // constructed with its own explicit formatter (LoggerOptions.formatter).
@@ -147,6 +149,7 @@ export class Logger {
       // to the same destinations.
       transports: [...this.transports],
       formatter: this.formatter,
+      formatAddedTransports: this.formatAddedTransports,
     };
     if (this.onTransportError) {
       options.onTransportError = this.onTransportError;
@@ -170,8 +173,14 @@ export class Logger {
 
   /**
    * Add a transport.
+   *
+   * This method does not give the logger formatter to the transport, unless
+   * `LoggerOptions.formatAddedTransports` is true.
    */
   addTransport(transport: Transport): void {
+    if (this.formatAddedTransports) {
+      transport.setDefaultFormatter?.(this.formatter);
+    }
     this.transports.push(transport);
   }
 
@@ -188,7 +197,11 @@ export class Logger {
   }
 
   /**
-   * Flush all transports.
+   * Call `flush` on each transport that has it, and wait for each promise.
+   *
+   * This method does not wait for a pending `write`. The built-in transports
+   * have no `flush`. A failure rejects the promise and does not go to
+   * `onTransportError`.
    */
   async flush(): Promise<void> {
     await Promise.all(
@@ -197,7 +210,11 @@ export class Logger {
   }
 
   /**
-   * Close all transports.
+   * Call `close` on each transport that has it, and wait for each promise.
+   *
+   * This method does not wait for a pending `write`. The built-in transports
+   * have no `close`. A failure rejects the promise and does not go to
+   * `onTransportError`.
    */
   async close(): Promise<void> {
     await Promise.all(

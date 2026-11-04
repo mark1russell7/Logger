@@ -149,7 +149,9 @@ emit("info");
 check("a logger with no transports sends the record nowhere", await until(() => $("#no-transports") !== null && outcome() === "passed"), outcome());
 
 // The rest of the page.
-check("the API table has only real results", $$("#api-rows tr").length === 13 && $$("#api-rows output").length >= 16 && $$("#api-rows output").every((output) => (output.textContent ?? "") !== "" && !(output.textContent ?? "").startsWith("throws")), `${$$("#api-rows tr").length} rows, ${$$("#api-rows output").length} outputs`);
+check("the API table has only real results", $$("#api-rows tr").length === 13 && $$("#api-rows output").length >= 17 && $$("#api-rows output").every((output) => (output.textContent ?? "") !== "" && !(output.textContent ?? "").startsWith("throws")), `${$$("#api-rows tr").length} rows, ${$$("#api-rows output").length} outputs`);
+const apiOutputs = $$("#api-rows output").map((output) => output.textContent ?? "");
+check("the API table shows both results of an added transport", apiOutputs.includes("[INFO] Hello") && apiOutputs.some((output) => output.startsWith('{"level":"INFO","message":"Hello"')), apiOutputs.join(" | "));
 check("the page shows the source of the batch transport", text("#batch-source").includes("implements Transport"), text("#batch-source").slice(0, 80));
 
 click("#reset");
