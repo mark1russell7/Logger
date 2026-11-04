@@ -25,7 +25,7 @@ describe("LogLevel", () => {
 
   it("has each member of log-level.d.ts with the same value, because the two files are kept by hand", () => {
     const declaration = readFileSync(new URL("../log-level.d.ts", import.meta.url), "utf8");
-    const members = [...declaration.matchAll(/^\s*([A-Z]+) = (\d+),$/gm)].map((m) => [m[1], Number(m[2])]);
+    const members = [...declaration.matchAll(/^\s*([A-Z]+) = (\d+),\s*$/gm)].map((m) => [m[1], Number(m[2])]);
     expect(members).toHaveLength(5);
     const names = Object.keys(LogLevel).filter((key) => Number.isNaN(Number(key)));
     expect(Object.fromEntries(members)).toEqual(Object.fromEntries(names.map((name) => [name, LogLevel[name as keyof typeof LogLevel]])));
