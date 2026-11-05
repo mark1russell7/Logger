@@ -167,14 +167,14 @@ importers:
   .:
     devDependencies:
       '@mark1russell7/api-report':
-        specifier: ^0.2.0
-        version: 0.2.1
+        specifier: ^0.3.1
+        version: 0.3.1
       '@mark1russell7/conventions':
         specifier: ^0.14.0
         version: 0.14.1
       '@mark1russell7/cue':
-        specifier: ^1.0.2
-        version: 1.1.0
+        specifier: ^2.1.1
+        version: 2.1.1
       '@mark1russell7/test':
         specifier: github:mark1russell7/test#11cc15dac38a6fc81dc497e46768c944c333a335
         version: https://codeload.github.com/mark1russell7/test/tar.gz/11cc15dac38a6fc81dc497e46768c944c333a335
@@ -195,8 +195,8 @@ importers:
         version: 0.2.0
     devDependencies:
       '@mark1russell7/cue':
-        specifier: ^1.0.2
-        version: 1.1.0
+        specifier: ^2.1.1
+        version: 2.1.1
       '@types/node':
         specifier: ^22.10.0
         version: 22.20.5
@@ -371,8 +371,8 @@ packages:
   '@jridgewell/sourcemap-codec@1.5.5':
     resolution: {integrity: sha512-cYQ9310grqxueWbl+WuIUIaiUaDcj7WOq5fVhEljNVgRfOUhY9fy2zTvfoqWsnebh8Sl70VScFbICvJnLKB0Og==}
 
-  '@mark1russell7/api-report@0.2.1':
-    resolution: {integrity: sha512-3bP316h+Thc6m4W2yvame5wTvDIMp7JDCM5CQBvDWZtjfsgr02Z7Vii9YjuPvogvkWvA4t09ihhnr73h0IKkRQ==}
+  '@mark1russell7/api-report@0.3.1':
+    resolution: {integrity: sha512-vA1KjafzH3Y5dfFZlGnqcvQn5H7QcGVSzM1tw3R8f1hng6uqrbCX596V+GdhLTCzo2X0Jmr3QLAw9WMEWc/7pQ==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -381,8 +381,8 @@ packages:
     engines: {node: '>=22'}
     hasBin: true
 
-  '@mark1russell7/cue@1.1.0':
-    resolution: {integrity: sha512-R9pjuWNFqd/LSfOI8uY7w8E2Dri8UQFGLodBuV4d2E0pwzWM5ISVXWVhC7+aYgrR1GXSMzbyo5ZLWvqyQCwdIg==}
+  '@mark1russell7/cue@2.1.1':
+    resolution: {integrity: sha512-0/L9nQwGqUTCLTnUPtYKJ/cvXTr/gJWFWASUzGUjKyj3LxNpYgAplLuTPNQe0g4kjcM+9JAb/D/IfYwBGvM/mA==}
     engines: {node: '>=22'}
     hasBin: true
 
@@ -1197,11 +1197,11 @@ snapshots:
 
   '@jridgewell/sourcemap-codec@1.5.5': {}
 
-  '@mark1russell7/api-report@0.2.1': {}
+  '@mark1russell7/api-report@0.3.1': {}
 
   '@mark1russell7/conventions@0.14.1': {}
 
-  '@mark1russell7/cue@1.1.0': {}
+  '@mark1russell7/cue@2.1.1': {}
 
   '@mark1russell7/site-pages@0.2.0': {}
 
