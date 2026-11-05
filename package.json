@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "@mark1russell7/logger",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Standalone logger with configurable transports and formatters",
   "repository": {
     "type": "git",
@@ -13,7 +13,7 @@
   "homepage": "https://mark1russell7.github.io/Logger/",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc -b",
+    "build": "tsc -b && node -e \"fs.copyFileSync('src/log-level.published.d.ts','dist/log-level.d.ts')\"",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json && pnpm --filter @logger/site run typecheck",
     "clean": "rm -rf dist .tsbuildinfo",
     "test": "vitest run && pnpm --filter @logger/site run test",

@@ -14,7 +14,7 @@ type Formatter: dist/types.d.ts#Formatter
 JsonFormatter: dist/formatters.d.ts#JsonFormatter
 LOG_LEVEL_NAMES: dist/types.d.ts#LOG_LEVEL_NAMES
 type LogEntry: dist/types.d.ts#LogEntry
-LogLevel: dist/types.d.ts#LogLevel
+LogLevel: dist/log-level.d.ts#LogLevel
 type LogOptions: dist/types.d.ts#LogOptions
 Logger: dist/logger.d.ts#Logger
 type LoggerOptions: dist/types.d.ts#LoggerOptions
@@ -59,6 +59,15 @@ export declare function createSimpleFormatter(): Formatter;
 
 ### dist/formatters.d.ts#createTimestampedFormatter
 export declare function createTimestampedFormatter(): Formatter;
+
+### dist/log-level.d.ts#LogLevel
+export declare enum LogLevel {
+    ERROR = 0,
+    WARN = 1,
+    INFO = 2,
+    DEBUG = 3,
+    TRACE = 4
+}
 
 ### dist/logger.d.ts#Logger
 export declare class Logger {
@@ -153,15 +162,6 @@ export interface LogEntry {
     timestamp: Date;
     data?: Record<string, unknown>;
     error?: Error;
-}
-
-### dist/types.d.ts#LogLevel
-export declare enum LogLevel {
-    ERROR = 0,
-    WARN = 1,
-    INFO = 2,
-    DEBUG = 3,
-    TRACE = 4
 }
 
 ### dist/types.d.ts#LogOptions

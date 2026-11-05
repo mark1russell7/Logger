@@ -8,17 +8,10 @@
 // Log Levels
 // =============================================================================
 
-/**
- * Log level enumeration.
- * Lower values = more severe.
- */
-export enum LogLevel {
-  ERROR = 0,
-  WARN = 1,
-  INFO = 2,
-  DEBUG = 3,
-  TRACE = 4,
-}
+// The file `log-level.ts` holds the values, and `log-level.published.d.ts` holds the enum that the package publishes.
+import { LogLevel } from "./log-level.js";
+
+export { LogLevel };
 
 /**
  * Log level names for display.
