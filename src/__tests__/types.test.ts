@@ -23,9 +23,9 @@ describe("LogLevel", () => {
     expect(Object.keys(LogLevel)).toEqual(["0", "1", "2", "3", "4", "ERROR", "WARN", "INFO", "DEBUG", "TRACE"]);
   });
 
-  it("has each member of log-level.d.ts with the same value, because the two files are kept by hand", () => {
-    const declaration = readFileSync(new URL("../log-level.d.ts", import.meta.url), "utf8");
-    const members = [...declaration.matchAll(/^\s*([A-Z]+) = (\d+),\s*$/gm)].map((m) => [m[1], Number(m[2])]);
+  it("has each member of the published enum with the same value as the object", () => {
+    const declaration = readFileSync(new URL("../log-level.published.d.ts", import.meta.url), "utf8");
+    const members = [...declaration.matchAll(/^\s*([A-Z]+) = (\d+),?\s*$/gm)].map((m) => [m[1], Number(m[2])]);
     expect(members).toHaveLength(5);
     const names = Object.keys(LogLevel).filter((key) => Number.isNaN(Number(key)));
     expect(Object.fromEntries(members)).toEqual(Object.fromEntries(names.map((name) => [name, LogLevel[name as keyof typeof LogLevel]])));

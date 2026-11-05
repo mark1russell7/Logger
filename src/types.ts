@@ -8,7 +8,7 @@
 // Log Levels
 // =============================================================================
 
-// The file `log-level.js` holds the values, and `log-level.d.ts` holds the enum. See the comment in `log-level.d.ts`.
+// The file `log-level.ts` holds the values, and `log-level.published.d.ts` holds the enum that the package publishes.
 import { LogLevel } from "./log-level.js";
 
 export { LogLevel };

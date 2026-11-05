@@ -60,6 +60,15 @@ export declare function createSimpleFormatter(): Formatter;
 ### dist/formatters.d.ts#createTimestampedFormatter
 export declare function createTimestampedFormatter(): Formatter;
 
+### dist/log-level.d.ts#LogLevel
+export declare enum LogLevel {
+    ERROR = 0,
+    WARN = 1,
+    INFO = 2,
+    DEBUG = 3,
+    TRACE = 4
+}
+
 ### dist/logger.d.ts#Logger
 export declare class Logger {
     constructor(options?: LoggerOptions);
@@ -153,15 +162,6 @@ export interface LogEntry {
     timestamp: Date;
     data?: Record<string, unknown>;
     error?: Error;
-}
-
-### dist/log-level.d.ts#LogLevel
-export declare enum LogLevel {
-    ERROR = 0,
-    WARN = 1,
-    INFO = 2,
-    DEBUG = 3,
-    TRACE = 4
 }
 
 ### dist/types.d.ts#LogOptions

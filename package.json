@@ -13,7 +13,7 @@
   "homepage": "https://mark1russell7.github.io/Logger/",
   "main": "./dist/index.js",
   "scripts": {
-    "build": "tsc -b && cp src/log-level.js src/log-level.d.ts dist/",
+    "build": "tsc -b && node -e \"fs.copyFileSync('src/log-level.published.d.ts','dist/log-level.d.ts')\"",
     "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.test.json && pnpm --filter @logger/site run typecheck",
     "clean": "rm -rf dist .tsbuildinfo",
     "test": "vitest run && pnpm --filter @logger/site run test",
