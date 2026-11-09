@@ -1,7 +1,7 @@
 {
   "$schema": "https://json.schemastore.org/package",
   "name": "@mark1russell7/logger",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Standalone logger with configurable transports and formatters",
   "repository": {
     "type": "git",
@@ -36,7 +36,9 @@
   },
   "files": [
     "dist",
-    "src"
+    "src",
+    "!**/*.tsbuildinfo",
+    "!src/__tests__"
   ],
   "sideEffects": false,
   "devDependencies": {
