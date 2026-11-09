@@ -21,7 +21,7 @@ concurrency:
 
 jobs:
   ci:
-    uses: mark1russell7/template/.github/workflows/reusable-ci.yml@7fcc1036a4b10f7f8d35c7d08f161cd872b03243 # main
+    uses: mark1russell7/template/.github/workflows/reusable-ci.yml@93668034510218d1ab35f1071d943f96d3fa7c38 # main
     with:
       # The logger runs on each OS. Node.js 22 is the oldest supported LTS version.
       os: '["ubuntu-latest", "windows-latest", "macos-latest"]'
