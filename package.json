@@ -44,6 +44,7 @@
     "@mark1russell7/conventions": "^0.35.0",
     "@mark1russell7/cue": "^2.1.1",
     "@mark1russell7/test": "github:mark1russell7/test#11cc15dac38a6fc81dc497e46768c944c333a335",
+    "@vitest/coverage-v8": "^3.0.0",
     "typescript": "^5.9.3",
     "vitest": "^3.0.0"
   },
