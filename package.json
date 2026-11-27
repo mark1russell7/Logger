@@ -48,7 +48,7 @@
     "@mark1russell7/cue": "^2.1.1",
     "@mark1russell7/test": "github:mark1russell7/test#11cc15dac38a6fc81dc497e46768c944c333a335",
     "@vitest/coverage-v8": "^4.1.11",
-    "typescript": "^5.9.3",
+    "typescript": "^7.0.0",
     "vitest": "^3.0.0"
   },
   "publishConfig": {
